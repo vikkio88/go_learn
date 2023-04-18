@@ -14,6 +14,7 @@ func NewApp() App {
 }
 
 func (a *App) Run() {
+mainLoop:
 	for {
 		switch a.state {
 		case Login:
@@ -28,10 +29,9 @@ func (a *App) Run() {
 
 		case Quit:
 			{
-				break
+				break mainLoop
 			}
 		}
-
 	}
 
 	a.Cleanup()
@@ -43,25 +43,20 @@ func (a *App) Cleanup() {
 }
 
 func (a *App) login() State {
-	println("\n\nLOGIN\n\n")
+	fmt.Print("\n\nLOGIN\n\n")
 	username := console.GetStr("username")
 	password := console.GetStr("password")
-	println(username, password)
+	fmt.Println(username, password)
 
 	return Dashboard
 }
 
 func (a *App) dashboard() State {
-	menu := make(map[string]string, 4)
-	menu["1"] = "Balance"
-	menu["2"] = "Withdraw"
-	menu["3"] = "Deposit"
-	menu["4"] = "Logout"
-	menu["5"] = "Logout"
-	c := console.ChooseFromMap("Menu", menu)
-	println(c)
+	menu := []string{"Balance", "Withdraw", "Deposit", "Logout", "Quit"}
+	c := console.ChooseFrom("Menu", menu)
+	fmt.Println(c)
 
-	return Login
+	return Quit
 }
 
 type State = uint8
