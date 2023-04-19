@@ -36,6 +36,19 @@ func GetInt(prompt string) int32 {
 	}
 }
 
+func GetF64(prompt string) float64 {
+	for {
+		str := GetStr(prompt)
+		res, err := strconv.ParseFloat(str, 64)
+
+		if err != nil {
+			fmt.Println("that is not a number, try again")
+			continue
+		}
+		return res
+	}
+}
+
 func ChooseFrom(prompt string, list []string) uint {
 	max := len(list)
 

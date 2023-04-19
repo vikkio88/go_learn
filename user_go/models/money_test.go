@@ -32,3 +32,17 @@ func TestMoneyMath(t *testing.T) {
 	assert.Errorf(t, err, "Currency")
 	assert.Equal(t, "300.00 $", m.Str())
 }
+
+func TestMoneyWithFractional(t *testing.T) {
+	m := models.NewMoneyUF(models.Dollar, 20, 75)
+	assert.Equal(t, "20.75 $", m.Str())
+	m = models.NewMoneyUF(models.Dollar, 20, 173)
+	assert.Equal(t, "21.73 $", m.Str())
+}
+
+func TestMoneyFromFloat(t *testing.T) {
+	m := models.NewMoneyFromF(models.Dollar, 21.54)
+	assert.Equal(t, "21.54 $", m.Str())
+	m = models.NewMoneyFromF(models.Dollar, 21.54)
+	assert.Equal(t, "21.54 $", m.Str())
+}

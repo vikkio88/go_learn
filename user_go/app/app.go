@@ -101,8 +101,8 @@ func (a *App) dashboard() State {
 	case 1:
 		{
 			fmt.Println("Withdraw")
-			val := console.GetInt("how much?")
-			amount := models.NewMoney(u.Balance.Currency(), val)
+			val := console.GetF64("how much?")
+			amount := models.NewMoneyFromF(u.Balance.Currency(), val)
 			u.Balance.Sub(amount)
 			fmt.Println("Done!")
 			console.EtC()
@@ -110,8 +110,8 @@ func (a *App) dashboard() State {
 	case 2:
 		{
 			fmt.Println("Deposit")
-			val := console.GetInt("how much?")
-			amount := models.NewMoney(u.Balance.Currency(), val)
+			val := console.GetF64("how much?")
+			amount := models.NewMoneyFromF(u.Balance.Currency(), val)
 			u.Balance.Add(amount)
 			fmt.Println("Done!")
 			console.EtC()

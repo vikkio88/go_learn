@@ -1,6 +1,9 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
 
 type Money struct {
 	val      int32
@@ -9,12 +12,26 @@ type Money struct {
 
 const MULTIPLIER_100 int32 = 100
 const MULTIPLIERF_100 float32 = 100
+const MULTIPLIERF64_100 float64 = 100
 
 func NewMoney(currency Currency, unit int32) Money {
 	return Money{
 		val:      unit * MULTIPLIER_100,
 		currency: currency,
 	}
+}
+
+func NewMoneyUF(currency Currency, unit int32, fractional int32) Money {
+	return Money{
+		val:      unit*MULTIPLIER_100 + fractional,
+		currency: currency,
+	}
+}
+
+func NewMoneyFromF(currency Currency, amount float64) Money {
+	val, _ := math.Modf(amount * 100)
+
+	return Money{val: int32(val), currency: currency}
 }
 
 func (m *Money) Currency() Currency {
