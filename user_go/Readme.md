@@ -2,17 +2,17 @@
 
 Small exercise for a cli tool.
 
-- [ ] User class
-- [ ] Money class
-- [ ] Money Math
-- [ ] App lifecycle with state
-- [ ] Catch Ctrl+C
-- [ ] User journey - Login
-- [ ] User journey - Logout
-- [ ] User journey - Withdraw
-- [ ] User journey - Deposit
-- [ ] User journey - Change Password
-- [ ] User journey - Quit
+- [x] User class
+- [x] Money class
+- [x] Money Math
+- [x] App lifecycle with state
+- [x] Catch Ctrl+C
+- [x] User journey - Login
+- [x] User journey - Logout
+- [x] User journey - Withdraw
+- [x] User journey - Deposit
+- [x] User journey - Change Password
+- [x] User journey - Quit
 - [ ] App persistency with JSON file
 - [ ] App persistency with db
 - [ ] Admin journey - Create User
