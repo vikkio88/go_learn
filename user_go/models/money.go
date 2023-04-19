@@ -17,6 +17,10 @@ func NewMoney(currency Currency, unit int32) Money {
 	}
 }
 
+func (m *Money) Currency() Currency {
+	return m.currency
+}
+
 func (m *Money) Str() string {
 	return fmt.Sprintf("%.2f %s", float32(m.val)/MULTIPLIERF_100, m.currency.Str())
 }

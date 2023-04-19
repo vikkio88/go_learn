@@ -8,6 +8,14 @@ import (
 	"strings"
 )
 
+func Cls() {
+	fmt.Print("\033[H\033[2J")
+}
+
+func EtC() {
+	GetStr("[ENTER] to continue...")
+}
+
 func GetStr(prompt string) string {
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Print(prompt + " : ")

@@ -10,9 +10,12 @@ import (
 func TestUserContruction(t *testing.T) {
 	u := models.NewUser("Mario Marii", models.NewMoney(models.Euro, 0))
 	assert.Equal(t, "mario.marii", u.Username)
+	assert.False(t, u.IsAdmin())
 
 	u2 := models.NewUser("Giacomo Cosino", models.NewMoney(models.Dollar, 0))
 	assert.NotEqual(t, u.Id, u2.Id)
+
+	assert.False(t, u2.IsAdmin())
 }
 
 func TestCheckingLogin(t *testing.T) {
@@ -20,6 +23,14 @@ func TestCheckingLogin(t *testing.T) {
 
 	assert.False(t, u.Check("fabro.fuma", "qwerty"))
 	assert.True(t, u.Check("fabrizio.fumagalli", "qwerty"))
+}
+
+func TestPasswordUpdate(t *testing.T) {
+	u := models.NewUser("Mario Rossi", models.Money{})
+	assert.True(t, u.Check("mario.rossi", "qwerty"))
+
+	u.ChangePassword("qwertyuiop")
+	assert.True(t, u.Check("mario.rossi", "qwertyuiop"))
 }
 
 func TestBalanceOperations(t *testing.T) {
