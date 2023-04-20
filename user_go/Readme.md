@@ -13,7 +13,7 @@ Small exercise for a cli tool.
 - [x] User journey - Deposit
 - [x] User journey - Change Password
 - [x] User journey - Quit
-- [ ] App persistency with JSON file
+- [x] App persistency with JSON file
 - [ ] App persistency with db
 - [ ] Admin journey - Create User
 - [x] User Journey - Add Complex money with fractional unit to movements
