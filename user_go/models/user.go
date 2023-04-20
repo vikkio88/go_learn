@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -15,12 +16,12 @@ const (
 )
 
 type User struct {
-	Id       string
-	Username string
-	FullName string
-	Balance  Money
-	password string
-	role     Role
+	Id       string `json:"id"`
+	Username string `json:"username"`
+	FullName string `json:"fullName"`
+	Balance  *Money `json:"balance"`
+	Password string `json:"password"`
+	Role     Role   `json:"role"`
 }
 
 func NewUser(fullName string, balance Money) User {
@@ -28,11 +29,20 @@ func NewUser(fullName string, balance Money) User {
 		Id:       ulid.Make().String(),
 		Username: strings.ToLower(strings.ReplaceAll(strings.TrimSpace(fullName), " ", ".")),
 		FullName: fullName,
-		Balance:  balance,
-		password: "qwerty",
-		role:     Client,
+		Balance:  &balance,
+		Password: "qwerty",
+		Role:     Client,
 	}
+}
 
+func NewAdmin(username string) User {
+	return User{
+		Id:       ulid.Make().String(),
+		Username: username,
+		Balance:  nil,
+		Password: "s4f3p4ssw0rd!",
+		Role:     Admin,
+	}
 }
 
 func (u *User) Str() string {
@@ -40,15 +50,15 @@ func (u *User) Str() string {
 }
 
 func (u *User) ChangePassword(newPassword string) {
-	u.password = newPassword
+	u.Password = newPassword
 }
 
 func (u *User) Check(username string, password string) bool {
-	return username == u.Username && password == u.password
+	return username == u.Username && password == u.Password
 }
 
 func (u *User) IsAdmin() bool {
-	return u.role == Admin
+	return u.Role == Admin
 }
 
 func (u *User) Deposit(amount Money) error {
@@ -57,4 +67,9 @@ func (u *User) Deposit(amount Money) error {
 
 func (u *User) Withdraw(amount Money) error {
 	return u.Balance.Sub(amount)
+}
+
+func (u *User) ToJson() (string, error) {
+	obj, err := json.Marshal(u)
+	return string(obj), err
 }

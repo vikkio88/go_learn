@@ -52,3 +52,10 @@ func TestBalanceOperations(t *testing.T) {
 	assert.NotNil(t, err)
 	assert.Equal(t, "150.00 $", u.Balance.Str())
 }
+
+func TestUserToJson(t *testing.T) {
+	u := models.NewUser("Mario Bros", models.NewMoney(models.Dollar, 100))
+	res, err := u.ToJson()
+	assert.Nil(t, err)
+	assert.Contains(t, res, "\"username\":\"mario.bros\",\"fullName\":\"Mario Bros\",\"balance\":{\"val\":10000,\"currency\":0},\"password\":\"qwerty\",\"role\":0}")
+}

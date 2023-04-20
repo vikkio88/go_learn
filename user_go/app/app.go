@@ -42,19 +42,13 @@ mainLoop:
 	for {
 		switch a.state {
 		case Login:
-			{
-				a.state = a.login()
-			}
-
+			a.state = a.login()
 		case Dashboard:
 			{
 				a.state = a.dashboard()
 			}
-
 		case Quit:
-			{
-				break mainLoop
-			}
+			break mainLoop
 		}
 	}
 
@@ -63,6 +57,7 @@ mainLoop:
 
 func (a *App) Cleanup() {
 	fmt.Println("running cleanup")
+	a.db.Persist()
 	fmt.Print("bye\n\n\n")
 }
 
@@ -87,48 +82,55 @@ func (a *App) dashboard() State {
 	if err != nil {
 		return Login
 	}
+
+	if u.IsAdmin() {
+		return a.adminDashboard(u)
+	}
+
+	return a.userDashboard(u)
+}
+
+func (a *App) adminDashboard(u *models.User) State {
+	console.Cls()
+	menu := []string{"Logout", "Quit"}
+	fmt.Println("ADMIN DASHBOARD ", u.Username)
+	c := console.ChooseFrom("Menu", menu)
+	switch c {
+	case 0:
+		{
+			fmt.Println("\nLogging out...")
+			a.context.logout()
+			return Login
+		}
+	case 1:
+		{
+			fmt.Println("Quit")
+			console.EtC()
+			return Quit
+		}
+	}
+
+	return Dashboard
+}
+
+func (a *App) userDashboard(u *models.User) State {
 	console.Cls()
 	menu := []string{"Balance", "Withdraw", "Deposit", "Change Password", "Logout", "Quit"}
 	fmt.Println("Welcome ", u.FullName)
 	c := console.ChooseFrom("Menu", menu)
 	switch c {
 	case 0:
-		{
-			fmt.Println("Current Balance")
-			fmt.Println(u.Balance.Str())
-			console.EtC()
-		}
+		balance(u)
 	case 1:
-		{
-			fmt.Println("Withdraw")
-			val := console.GetF64("how much?")
-			amount := models.NewMoneyFromF(u.Balance.Currency(), val)
-			u.Balance.Sub(amount)
-			fmt.Println("Done!")
-			console.EtC()
-		}
+		withdraw(u)
 	case 2:
-		{
-			fmt.Println("Deposit")
-			val := console.GetF64("how much?")
-			amount := models.NewMoneyFromF(u.Balance.Currency(), val)
-			u.Balance.Add(amount)
-			fmt.Println("Done!")
-			console.EtC()
-		}
+		deposit(u)
 	case 3:
-		{
-			fmt.Println("Change Password")
-			newP := console.GetStr("new password")
-			u.ChangePassword(newP)
-			fmt.Println("Done!")
-			console.EtC()
-		}
+		changePassword(u)
 	case 4:
 		{
-			fmt.Println("Signing you out...")
+			fmt.Println("\nLogging out...")
 			a.context.logout()
-			console.EtC()
 			return Login
 		}
 	case 5:
