@@ -81,6 +81,7 @@ func (d *Db) Persist() {
 
 func (d *Db) Load() {
 	filepath := d.config.DbFilePath
+
 	if _, err := os.Stat(filepath); errors.Is(err, os.ErrNotExist) {
 		d.users = generateUsers()
 		d.Persist()
