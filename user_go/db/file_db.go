@@ -80,13 +80,14 @@ func (d *Db) Persist() {
 }
 
 func (d *Db) Load() {
-	if _, err := os.Stat(d.config.DbFilePath); errors.Is(err, os.ErrNotExist) {
+	filepath := d.config.DbFilePath
+	if _, err := os.Stat(filepath); errors.Is(err, os.ErrNotExist) {
 		d.users = generateUsers()
 		d.Persist()
 		return
 	}
 
-	data, err := os.ReadFile(dbFilePath)
+	data, err := os.ReadFile(filepath)
 	if err != nil {
 		d.users = generateUsers()
 		d.Persist()
