@@ -2,6 +2,7 @@ package models_test
 
 import (
 	"testing"
+	"user_store/libs"
 	"user_store/models"
 
 	"github.com/stretchr/testify/assert"
@@ -53,9 +54,17 @@ func TestBalanceOperations(t *testing.T) {
 	assert.Equal(t, "150.00 $", u.Balance.Str())
 }
 
-func TestUserToJson(t *testing.T) {
+func TestUserToDto(t *testing.T) {
 	u := models.NewUser("Mario Bros", models.NewMoney(models.Dollar, 100))
-	res, err := u.ToJson()
+	cryp := libs.NewCrypto("somePassword")
+	res := u.DTO(cryp)
+	assert.IsType(t, models.UserDTO{}, res)
+	assert.Equal(t, u.Balance, res.Balance)
+	assert.Equal(t, u.Id, res.Id)
+
+	crypted, err := cryp.B64Decode(res.Password)
 	assert.Nil(t, err)
-	assert.Contains(t, res, "\"username\":\"mario.bros\",\"fullName\":\"Mario Bros\",\"balance\":{\"val\":10000,\"currency\":0},\"password\":\"qwerty\",\"role\":0}")
+	decp, err1 := cryp.Decrypt(crypted)
+	assert.Nil(t, err1)
+	assert.Equal(t, "qwerty", decp)
 }

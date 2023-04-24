@@ -1,9 +1,9 @@
 package models
 
 import (
-	"encoding/json"
 	"fmt"
 	"strings"
+	"user_store/interfaces"
 
 	"github.com/oklog/ulid/v2"
 )
@@ -16,12 +16,12 @@ const (
 )
 
 type User struct {
-	Id       string `json:"id"`
-	Username string `json:"username"`
-	FullName string `json:"fullName"`
-	Balance  *Money `json:"balance"`
-	Password string `json:"password"`
-	Role     Role   `json:"role"`
+	Id       string
+	Username string
+	FullName string
+	Balance  *Money
+	password string
+	role     Role
 }
 
 func NewUser(fullName string, balance Money) User {
@@ -30,8 +30,8 @@ func NewUser(fullName string, balance Money) User {
 		Username: strings.ToLower(strings.ReplaceAll(strings.TrimSpace(fullName), " ", ".")),
 		FullName: fullName,
 		Balance:  &balance,
-		Password: "qwerty",
-		Role:     Client,
+		password: "qwerty",
+		role:     Client,
 	}
 }
 
@@ -40,8 +40,8 @@ func NewAdmin(username string) User {
 		Id:       ulid.Make().String(),
 		Username: username,
 		Balance:  nil,
-		Password: "s4f3p4ssw0rd!",
-		Role:     Admin,
+		password: "s4f3p4ssw0rd!",
+		role:     Admin,
 	}
 }
 
@@ -50,15 +50,15 @@ func (u *User) Str() string {
 }
 
 func (u *User) ChangePassword(newPassword string) {
-	u.Password = newPassword
+	u.password = newPassword
 }
 
 func (u *User) Check(username string, password string) bool {
-	return username == u.Username && password == u.Password
+	return username == u.Username && password == u.password
 }
 
 func (u *User) IsAdmin() bool {
-	return u.Role == Admin
+	return u.role == Admin
 }
 
 func (u *User) Deposit(amount Money) error {
@@ -69,7 +69,38 @@ func (u *User) Withdraw(amount Money) error {
 	return u.Balance.Sub(amount)
 }
 
-func (u *User) ToJson() (string, error) {
-	obj, err := json.Marshal(u)
-	return string(obj), err
+func (u *User) DTO(cryptoHelper interfaces.CryptoLib) UserDTO {
+	hiddenPassword, _ := cryptoHelper.Encrypt(u.password)
+	based := cryptoHelper.B64Encode(hiddenPassword)
+	return UserDTO{
+		Id:       u.Id,
+		Username: u.Username,
+		FullName: u.FullName,
+		Balance:  u.Balance,
+		Password: based,
+		Role:     u.role,
+	}
+}
+
+type UserDTO struct {
+	Id       string `json:"id"`
+	Username string `json:"username"`
+	FullName string `json:"fullName"`
+	Balance  *Money `json:"balance"`
+	Password string `json:"password"`
+	Role     Role   `json:"role"`
+}
+
+func (u *UserDTO) User(cryptoHelper interfaces.CryptoLib) User {
+	coded, _ := cryptoHelper.B64Decode(u.Password)
+	password, _ := cryptoHelper.Decrypt(string(coded))
+	//TODO: add error handling here
+	return User{
+		Id:       u.Id,
+		Username: u.Username,
+		FullName: u.FullName,
+		Balance:  u.Balance,
+		password: password,
+		role:     u.Role,
+	}
 }

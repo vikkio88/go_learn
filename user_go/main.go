@@ -23,7 +23,8 @@ func handleCtrlC(c chan os.Signal, a *app.App) {
 }
 
 func main() {
-	db := db.NewDb()
+	config := db.LoadConfigFromEnv()
+	db := db.NewDb(config)
 	a := app.NewApp(db)
 	setupCtrlC(&a)
 
