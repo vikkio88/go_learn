@@ -37,21 +37,21 @@ func TestPasswordUpdate(t *testing.T) {
 func TestBalanceOperations(t *testing.T) {
 	u := models.NewUser("Mario Marii", models.NewMoney(models.Dollar, 0))
 
-	assert.Equal(t, "0.00 $", u.Balance.Str())
+	assert.Equal(t, "0.00 $", u.Balance.String())
 	err := u.Deposit(models.NewMoney(models.Dollar, 300))
 	assert.Nil(t, err)
-	assert.Equal(t, "300.00 $", u.Balance.Str())
+	assert.Equal(t, "300.00 $", u.Balance.String())
 	err = u.Withdraw(models.NewMoney(models.Dollar, 150))
 	assert.Nil(t, err)
-	assert.Equal(t, "150.00 $", u.Balance.Str())
+	assert.Equal(t, "150.00 $", u.Balance.String())
 
 	err = u.Deposit(models.NewMoney(models.Euro, 300))
 	assert.NotNil(t, err)
-	assert.Equal(t, "150.00 $", u.Balance.Str())
+	assert.Equal(t, "150.00 $", u.Balance.String())
 
 	err = u.Withdraw(models.NewMoney(models.Euro, 300))
 	assert.NotNil(t, err)
-	assert.Equal(t, "150.00 $", u.Balance.Str())
+	assert.Equal(t, "150.00 $", u.Balance.String())
 }
 
 func TestUserToDto(t *testing.T) {

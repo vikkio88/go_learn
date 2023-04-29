@@ -45,7 +45,7 @@ func NewAdmin(username string) User {
 	}
 }
 
-func (u *User) Str() string {
+func (u *User) String() string {
 	return fmt.Sprintf("%s %s", u.Id, u.Username)
 }
 

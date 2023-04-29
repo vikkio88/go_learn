@@ -38,7 +38,7 @@ func (m *Money) GetCurrency() Currency {
 	return m.Currency
 }
 
-func (m *Money) Str() string {
+func (m *Money) String() string {
 	return fmt.Sprintf("%.2f %s", float32(m.Val)/MULTIPLIERF_100, m.Currency.Str())
 }
 

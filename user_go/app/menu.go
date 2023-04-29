@@ -8,7 +8,7 @@ import (
 
 func balance(u *models.User) {
 	fmt.Println("Current Balance")
-	fmt.Println(u.Balance.Str())
+	fmt.Println(u.Balance)
 	console.EtC()
 }
 
