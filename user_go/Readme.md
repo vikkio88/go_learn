@@ -19,4 +19,4 @@ Small exercise for a cli tool.
 - [ ] App persistency with db
 - [ ] Admin journey - Create User
 - [x] User Journey - Add Complex money with fractional unit to movements
-- [ ] User Journey - Move Move between users
+- [ ] User Journey - Move Money between users
