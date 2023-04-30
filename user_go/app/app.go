@@ -115,8 +115,9 @@ func (a *App) adminDashboard(u *models.User) State {
 
 func (a *App) userDashboard(u *models.User) State {
 	console.Cls()
-	menu := []string{"Balance", "Withdraw", "Deposit", "Change Password", "Logout", "Quit"}
+	menu := []string{"Balance", "Withdraw", "Deposit", "Move Money", "Change Password", "Logout", "Quit"}
 	fmt.Println("Welcome ", u.FullName)
+	fmt.Println("Account Id: ", u.Id)
 	c := console.ChooseFrom("Menu", menu)
 	switch c {
 	case 0:
@@ -126,14 +127,16 @@ func (a *App) userDashboard(u *models.User) State {
 	case 2:
 		deposit(u)
 	case 3:
-		changePassword(u)
+		moveMoney(u, a.db)
 	case 4:
+		changePassword(u)
+	case 5:
 		{
 			fmt.Println("\nLogging out...")
 			a.context.logout()
 			return Login
 		}
-	case 5:
+	case 6:
 		{
 			fmt.Println("Quit")
 			console.EtC()

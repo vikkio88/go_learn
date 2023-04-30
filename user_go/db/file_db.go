@@ -59,6 +59,16 @@ func NewDb(config JsonDbConfig) *Db {
 	return &db
 }
 
+func (d *Db) GetUserById(id string) (*models.User, error) {
+	idx := slices.IndexFunc(d.users, func(u models.User) bool { return u.Id == id })
+
+	if idx == -1 {
+		return nil, fmt.Errorf("No User")
+	}
+
+	return &d.users[idx], nil
+}
+
 func (d *Db) GetUserByLogin(username string, password string) (*models.User, error) {
 	idx := slices.IndexFunc(d.users, func(u models.User) bool { return u.Check(username, password) })
 
