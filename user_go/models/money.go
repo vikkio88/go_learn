@@ -39,7 +39,7 @@ func (m *Money) GetCurrency() Currency {
 }
 
 func (m *Money) String() string {
-	return fmt.Sprintf("%.2f %s", float32(m.Val)/MULTIPLIERF_100, m.Currency.Str())
+	return fmt.Sprintf("%.2f %s", float32(m.Val)/MULTIPLIERF_100, m.Currency.String())
 }
 
 func (m *Money) Add(n Money) error {
@@ -59,6 +59,21 @@ func (m *Money) Sub(n Money) error {
 	m.Val -= n.Val
 	return nil
 }
+func (m *Money) Cmp(n Money) int {
+	if m.Val > n.Val {
+		return 1
+	}
+
+	if m.Val == n.Val {
+		return 0
+	}
+
+	return -1
+}
+
+func (m *Money) SameCurrency(n Money) bool {
+	return m.Currency == n.Currency
+}
 
 type Currency uint8
 
@@ -68,7 +83,7 @@ const (
 	Pound
 )
 
-func (c Currency) Str() string {
+func (c Currency) String() string {
 	switch c {
 	case Dollar:
 		return "$"
@@ -79,4 +94,31 @@ func (c Currency) Str() string {
 	}
 
 	return ""
+}
+
+type ErrorDifferentCurrency struct {
+	left  Currency
+	right Currency
+}
+
+func NewErrorDifferentCurrency(c Currency, c1 Currency) ErrorDifferentCurrency {
+	return ErrorDifferentCurrency{
+		c,
+		c1,
+	}
+}
+
+func (e ErrorDifferentCurrency) Error() string {
+	return fmt.Sprintf("The currencies are not compatible (%s and %s)", e.left, e.right)
+}
+
+type ErrorInsufficientFunds struct {
+}
+
+func NewErrorInsufficientFunds() ErrorInsufficientFunds {
+	return ErrorInsufficientFunds{}
+}
+
+func (e ErrorInsufficientFunds) Error() string {
+	return "Insufficient Funds"
 }

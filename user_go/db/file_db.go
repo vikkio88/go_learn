@@ -79,6 +79,27 @@ func (d *Db) GetUserByLogin(username string, password string) (*models.User, err
 	return &d.users[idx], nil
 }
 
+func (d *Db) MoveMoney(payerId string, payeeId string, amount models.Money) (bool, error) {
+	payer, err := d.GetUserById(payerId)
+	payee, err2 := d.GetUserById(payeeId)
+	if err != nil || err2 != nil {
+		return false, NewErrorUserNotFound()
+	}
+
+	if payer.Balance.Cmp(amount) < 0 {
+		return false, models.NewErrorInsufficientFunds()
+	}
+
+	if !payer.Balance.SameCurrency(*payee.Balance) {
+		return false, models.NewErrorDifferentCurrency(payer.Balance.Currency, payee.Balance.Currency)
+	}
+
+	payer.Balance.Sub(amount)
+	payee.Balance.Add(amount)
+
+	return true, nil
+}
+
 func (d *Db) Persist() {
 	users := len(d.users)
 	dtos := make([]models.UserDTO, users)
@@ -114,4 +135,13 @@ func (d *Db) Load() {
 	}
 
 	d.users = users
+}
+
+type ErrorUserNotFound struct{}
+
+func NewErrorUserNotFound() ErrorUserNotFound {
+	return ErrorUserNotFound{}
+}
+func (e ErrorUserNotFound) Error() string {
+	return "User not found"
 }

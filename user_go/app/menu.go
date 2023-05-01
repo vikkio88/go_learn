@@ -64,8 +64,15 @@ func moveMoney(u *models.User, db *db.Db) {
 	val := console.GetF64("how much money?")
 	//TODO:  check if enough money in the account
 	amount := models.NewMoneyFromF(u.Balance.GetCurrency(), val)
-	u.Balance.Sub(amount)
-	u2.Balance.Add(amount)
-	fmt.Println("Done!")
-	console.EtC()
+	res, err := db.MoveMoney(u.Id, u2.Id, amount)
+	if res {
+		fmt.Println("Done!")
+		console.EtC()
+		return
+	}
+
+	if err != nil {
+		fmt.Println(err.Error())
+		console.EtC()
+	}
 }
