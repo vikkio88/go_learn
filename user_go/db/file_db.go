@@ -86,16 +86,19 @@ func (d *Db) MoveMoney(payerId string, payeeId string, amount models.Money) (boo
 		return false, NewErrorUserNotFound()
 	}
 
-	if payer.Balance.Cmp(amount) < 0 {
+	payerAccount := payer.GetDefaultAccount()
+	payeeAccount := payee.GetDefaultAccount()
+
+	if payerAccount.Balance.Cmp(amount) < 0 {
 		return false, models.NewErrorInsufficientFunds()
 	}
 
-	if !payer.Balance.SameCurrency(*payee.Balance) {
-		return false, models.NewErrorDifferentCurrency(payer.Balance.Currency, payee.Balance.Currency)
+	if !payerAccount.Balance.SameCurrency(*payeeAccount.Balance) {
+		return false, models.NewErrorDifferentCurrency(payeeAccount.Balance.Currency, payeeAccount.Balance.Currency)
 	}
 
-	payer.Balance.Sub(amount)
-	payee.Balance.Add(amount)
+	payerAccount.Balance.Sub(amount)
+	payeeAccount.Balance.Add(amount)
 
 	return true, nil
 }

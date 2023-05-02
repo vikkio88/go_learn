@@ -37,21 +37,21 @@ func TestPasswordUpdate(t *testing.T) {
 func TestBalanceOperations(t *testing.T) {
 	u := models.NewUser("Mario Marii", models.NewMoney(models.Dollar, 0))
 
-	assert.Equal(t, "0.00 $", u.Balance.String())
+	assert.Equal(t, "0.00 $", u.GetDefaultAccount().Balance.String())
 	err := u.Deposit(models.NewMoney(models.Dollar, 300))
 	assert.Nil(t, err)
-	assert.Equal(t, "300.00 $", u.Balance.String())
+	assert.Equal(t, "300.00 $", u.GetDefaultAccount().Balance.String())
 	err = u.Withdraw(models.NewMoney(models.Dollar, 150))
 	assert.Nil(t, err)
-	assert.Equal(t, "150.00 $", u.Balance.String())
+	assert.Equal(t, "150.00 $", u.GetDefaultAccount().Balance.String())
 
 	err = u.Deposit(models.NewMoney(models.Euro, 300))
 	assert.NotNil(t, err)
-	assert.Equal(t, "150.00 $", u.Balance.String())
+	assert.Equal(t, "150.00 $", u.GetDefaultAccount().Balance.String())
 
 	err = u.Withdraw(models.NewMoney(models.Euro, 300))
 	assert.NotNil(t, err)
-	assert.Equal(t, "150.00 $", u.Balance.String())
+	assert.Equal(t, "150.00 $", u.GetDefaultAccount().Balance.String())
 }
 
 func TestUserToDto(t *testing.T) {
@@ -59,7 +59,7 @@ func TestUserToDto(t *testing.T) {
 	cryp := libs.NewCrypto("somePassword")
 	res := u.DTO(cryp)
 	assert.IsType(t, models.UserDTO{}, res)
-	assert.Equal(t, u.Balance, res.Balance)
+	assert.Equal(t, u.GetDefaultAccount().Balance, res.Accounts[0].Balance)
 	assert.Equal(t, u.Id, res.Id)
 
 	crypted, err := cryp.B64Decode(res.Password)

@@ -9,15 +9,16 @@ import (
 
 func balance(u *models.User) {
 	fmt.Println("Current Balance")
-	fmt.Println(u.Balance)
+	fmt.Println(fmt.Sprintf("%v", u.GetDefaultAccount().Balance))
 	console.EtC()
 }
 
 func withdraw(u *models.User) {
 	fmt.Println("Withdraw")
+	account := u.GetDefaultAccount()
 	val := console.GetF64("how much?")
-	amount := models.NewMoneyFromF(u.Balance.GetCurrency(), val)
-	u.Balance.Sub(amount)
+	amount := models.NewMoneyFromF(account.Balance.Currency, val)
+	account.Balance.Sub(amount)
 	fmt.Println("Done!")
 	console.EtC()
 }
@@ -25,8 +26,9 @@ func withdraw(u *models.User) {
 func deposit(u *models.User) {
 	fmt.Println("Deposit")
 	val := console.GetF64("how much?")
-	amount := models.NewMoneyFromF(u.Balance.GetCurrency(), val)
-	u.Balance.Add(amount)
+	account := u.GetDefaultAccount()
+	amount := models.NewMoneyFromF(account.Balance.Currency, val)
+	account.Balance.Add(amount)
 	fmt.Println("Done!")
 	console.EtC()
 }
@@ -63,7 +65,8 @@ func moveMoney(u *models.User, db *db.Db) {
 	}
 	val := console.GetF64("how much money?")
 	//TODO:  check if enough money in the account
-	amount := models.NewMoneyFromF(u.Balance.GetCurrency(), val)
+	account := u.GetDefaultAccount()
+	amount := models.NewMoneyFromF(account.Balance.Currency, val)
 	res, err := db.MoveMoney(u.Id, u2.Id, amount)
 	if res {
 		fmt.Println("Done!")

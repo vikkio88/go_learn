@@ -34,10 +34,6 @@ func NewMoneyFromF(currency Currency, amount float64) Money {
 	return Money{Val: int32(val), Currency: currency}
 }
 
-func (m *Money) GetCurrency() Currency {
-	return m.Currency
-}
-
 func (m *Money) String() string {
 	return fmt.Sprintf("%.2f %s", float32(m.Val)/MULTIPLIERF_100, m.Currency.String())
 }

@@ -6,6 +6,7 @@ import (
 	"user_store/interfaces"
 
 	"github.com/oklog/ulid/v2"
+	"golang.org/x/exp/slices"
 )
 
 type Role uint8
@@ -19,17 +20,18 @@ type User struct {
 	Id       string
 	Username string
 	FullName string
-	Balance  *Money
+	Accounts []Account
 	password string
 	role     Role
 }
 
 func NewUser(fullName string, balance Money) User {
+	accounts := []Account{NewDefaultAccount(balance)}
 	return User{
 		Id:       ulid.Make().String(),
 		Username: strings.ToLower(strings.ReplaceAll(strings.TrimSpace(fullName), " ", ".")),
 		FullName: fullName,
-		Balance:  &balance,
+		Accounts: accounts,
 		password: "qwerty",
 		role:     Client,
 	}
@@ -39,7 +41,7 @@ func NewAdmin(username string) User {
 	return User{
 		Id:       ulid.Make().String(),
 		Username: username,
-		Balance:  nil,
+		Accounts: nil,
 		password: "s4f3p4ssw0rd!",
 		role:     Admin,
 	}
@@ -61,12 +63,27 @@ func (u *User) IsAdmin() bool {
 	return u.role == Admin
 }
 
-func (u *User) Deposit(amount Money) error {
-	return u.Balance.Add(amount)
+func (u *User) GetAccountById(id string) Account {
+	idx := slices.IndexFunc(u.Accounts, func(a Account) bool { return a.Id == id })
+
+	return u.Accounts[idx]
 }
 
+func (u *User) GetDefaultAccount() *Account {
+	idx := slices.IndexFunc(u.Accounts, func(a Account) bool { return a.Name == DefaultAccountName })
+	return &u.Accounts[idx]
+}
+
+// func (u *User) Deposit(amount Money, accountId string) error {
+func (u *User) Deposit(amount Money) error {
+	account := u.GetDefaultAccount()
+	return account.Balance.Add(amount)
+}
+
+// func (u *User) Withdraw(amount Money, accountId string) error {
 func (u *User) Withdraw(amount Money) error {
-	return u.Balance.Sub(amount)
+	account := u.GetDefaultAccount()
+	return account.Balance.Sub(amount)
 }
 
 func (u *User) DTO(cryptoHelper interfaces.CryptoLib) UserDTO {
@@ -76,19 +93,19 @@ func (u *User) DTO(cryptoHelper interfaces.CryptoLib) UserDTO {
 		Id:       u.Id,
 		Username: u.Username,
 		FullName: u.FullName,
-		Balance:  u.Balance,
+		Accounts: u.Accounts,
 		Password: based,
 		Role:     u.role,
 	}
 }
 
 type UserDTO struct {
-	Id       string `json:"id"`
-	Username string `json:"username"`
-	FullName string `json:"fullName"`
-	Balance  *Money `json:"balance"`
-	Password string `json:"password"`
-	Role     Role   `json:"role"`
+	Id       string    `json:"id"`
+	Username string    `json:"username"`
+	FullName string    `json:"fullName"`
+	Accounts []Account `json:"accounts"`
+	Password string    `json:"password"`
+	Role     Role      `json:"role"`
 }
 
 func (u *UserDTO) User(cryptoHelper interfaces.CryptoLib) User {
@@ -99,7 +116,7 @@ func (u *UserDTO) User(cryptoHelper interfaces.CryptoLib) User {
 		Id:       u.Id,
 		Username: u.Username,
 		FullName: u.FullName,
-		Balance:  u.Balance,
+		Accounts: u.Accounts,
 		password: password,
 		role:     u.Role,
 	}

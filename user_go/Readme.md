@@ -7,16 +7,21 @@ Small exercise for a cli tool.
 - [x] Money Math
 - [x] App lifecycle with state
 - [x] Catch Ctrl+C
-- [x] User journey - Login
-- [x] User journey - Logout
-- [x] User journey - Withdraw
-- [x] User journey - Deposit
-- [x] User journey - Change Password
-- [x] User journey - Quit
+- [x] User journeys
+    - [x] Login
+    - [x] Logout
+    - [x] Withdraw
+    - [x] Deposit
+    - [x] Change Password
+    - [x] Quit
 - [x] App persistency with JSON file
+    - [ ] App persistency with some db (not plain json)
 - [x] Encrypt password whilst persisted
 - [x] Manage Secrets with env files or similar
-- [ ] App persistency with db
-- [ ] Admin journey - Create User
+- [ ] Admin journey - Manage Users (create/delete/reset password)
 - [x] User Journey - Add Complex money with fractional unit to movements
 - [x] User Journey - Move Money between users
+- [ ] Allow users to have many different bank accounts
+- [ ] Allow different currency money exchange
+- [ ] Simulate Currency Exchange fluctuation
+- [ ] Record Transaction history
