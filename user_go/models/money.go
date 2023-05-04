@@ -3,6 +3,7 @@ package models
 import (
 	"fmt"
 	"math"
+	"user_store/h"
 )
 
 type Money struct {
@@ -35,7 +36,7 @@ func NewMoneyFromF(currency Currency, amount float64) Money {
 }
 
 func (m *Money) String() string {
-	return fmt.Sprintf("%.2f %s", float32(m.Val)/MULTIPLIERF_100, m.Currency.String())
+	return h.F("%.2f %s", float32(m.Val)/MULTIPLIERF_100, m.Currency.String())
 }
 
 func (m *Money) Add(n Money) error {
@@ -105,7 +106,7 @@ func NewErrorDifferentCurrency(c Currency, c1 Currency) ErrorDifferentCurrency {
 }
 
 func (e ErrorDifferentCurrency) Error() string {
-	return fmt.Sprintf("The currencies are not compatible (%s and %s)", e.left, e.right)
+	return h.F("The currencies are not compatible (%s and %s)", e.left, e.right)
 }
 
 type ErrorInsufficientFunds struct {

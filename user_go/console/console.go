@@ -6,6 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"user_store/h"
 )
 
 func Cls() {
@@ -58,11 +59,11 @@ func ChooseFrom(prompt string, list []string) uint {
 	}
 	fmt.Println(prompt)
 	for i, item := range list {
-		fmt.Println(fmt.Sprintf("%d . %v", i+1, item))
+		fmt.Println(h.F("%d . %v", i+1, item))
 	}
 
 	for {
-		choice := GetInt(fmt.Sprintf("[1-%d]", max))
+		choice := GetInt(h.F("[1-%d]", max))
 		if choice < 1 || choice > int32(max) {
 			println("Choice not in the menu")
 			continue
@@ -80,7 +81,7 @@ func ChooseFromMap(prompt string, list map[string]string) string {
 	}
 	fmt.Println(prompt)
 	for key, item := range list {
-		fmt.Println(fmt.Sprintf("%s . %s", key, item))
+		fmt.Println(h.F("%s . %s", key, item))
 	}
 
 	for {

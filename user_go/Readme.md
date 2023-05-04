@@ -18,10 +18,13 @@ Small exercise for a cli tool.
     - [ ] App persistency with some db (not plain json)
 - [x] Encrypt password whilst persisted
 - [x] Manage Secrets with env files or similar
-- [ ] Admin journey - Manage Users (create/delete/reset password)
+- [ ] Admin journey
+    - [ ] Manage Users (create/delete/reset password)
+    - [ ] Create new account for users
 - [x] User Journey - Add Complex money with fractional unit to movements
 - [x] User Journey - Move Money between users
 - [ ] Allow users to have many different bank accounts
+    - [ ] move money between accounts
 - [ ] Allow different currency money exchange
 - [ ] Simulate Currency Exchange fluctuation
 - [ ] Record Transaction history

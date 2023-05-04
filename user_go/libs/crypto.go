@@ -6,8 +6,8 @@ import (
 	"crypto/rand"
 	b64 "encoding/base64"
 	"errors"
-	"fmt"
 	"io"
+	"user_store/h"
 )
 
 type Crypto struct {
@@ -39,7 +39,8 @@ func (c Crypto) B64Encode(content string) string {
 }
 
 func Keyfy(password string) []byte {
-	password = fmt.Sprintf("%032s", password)
+	//this is to pad the password to make it 32
+	password = h.F("%032s", password)
 	key := ""
 	for i := 0; i < 32; i++ {
 		key += string(password[i])

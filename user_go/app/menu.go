@@ -4,33 +4,51 @@ import (
 	"fmt"
 	"user_store/console"
 	"user_store/db"
+	"user_store/h"
 	"user_store/models"
 )
 
-func balance(u *models.User) {
-	fmt.Println("Current Balance")
-	fmt.Println(fmt.Sprintf("%v", u.GetDefaultAccount().Balance))
+func balance(a *models.Account) {
+	fmt.Println(h.F("\nAccount: %s", a.Name))
+	fmt.Println(h.F("id: %s", a.Id))
+	fmt.Println(h.F("currency: %s", a.Balance.Currency))
+	fmt.Println("\n\nCurrent Balance")
+	fmt.Println(h.F("%v\n", a.Balance))
 	console.EtC()
 }
 
-func withdraw(u *models.User) {
+func withdraw(a *models.Account) {
 	fmt.Println("Withdraw")
-	account := u.GetDefaultAccount()
 	val := console.GetF64("how much?")
-	amount := models.NewMoneyFromF(account.Balance.Currency, val)
-	account.Balance.Sub(amount)
+	amount := models.NewMoneyFromF(a.Balance.Currency, val)
+	a.Balance.Sub(amount)
 	fmt.Println("Done!")
 	console.EtC()
 }
 
-func deposit(u *models.User) {
+func deposit(a *models.Account) {
 	fmt.Println("Deposit")
 	val := console.GetF64("how much?")
-	account := u.GetDefaultAccount()
-	amount := models.NewMoneyFromF(account.Balance.Currency, val)
-	account.Balance.Add(amount)
+	amount := models.NewMoneyFromF(a.Balance.Currency, val)
+	a.Balance.Add(amount)
 	fmt.Println("Done!")
 	console.EtC()
+}
+
+func changeAccount(ctx *Context, db *db.Db) {
+	accNumber := len(ctx.user.Accounts)
+	if accNumber < 2 {
+		fmt.Println("You only have 1 account")
+		console.EtC()
+		return
+	}
+	accounts := make([]string, len(ctx.user.Accounts))
+	for i, a := range ctx.user.Accounts {
+		accounts[i] = a.Name
+	}
+	c := console.ChooseFrom("which account", accounts)
+
+	ctx.account = &ctx.user.Accounts[c]
 }
 
 func changePassword(u *models.User) {
@@ -41,9 +59,12 @@ func changePassword(u *models.User) {
 	console.EtC()
 }
 
-func moveMoney(u *models.User, db *db.Db) {
-	tries := 3
+func moveMoney(u *models.User, account *models.Account, db *db.Db) {
 	fmt.Println("Move money")
+	fmt.Println("this is temporarly disabled")
+	console.EtC()
+	return
+	tries := 3
 	var u2 *models.User
 	for {
 		if tries < 1 {
@@ -55,7 +76,7 @@ func moveMoney(u *models.User, db *db.Db) {
 		ux, err := db.GetUserById(id)
 		if err != nil {
 			tries--
-			fmt.Println(fmt.Sprintf("No account found with that id... try again (%d/3 tries left)", tries))
+			fmt.Println(h.F("No account found with that id... try again (%d/3 tries left)", tries))
 			continue
 		} else {
 			u2 = ux
@@ -65,7 +86,6 @@ func moveMoney(u *models.User, db *db.Db) {
 	}
 	val := console.GetF64("how much money?")
 	//TODO:  check if enough money in the account
-	account := u.GetDefaultAccount()
 	amount := models.NewMoneyFromF(account.Balance.Currency, val)
 	res, err := db.MoveMoney(u.Id, u2.Id, amount)
 	if res {

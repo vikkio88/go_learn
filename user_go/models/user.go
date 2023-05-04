@@ -1,8 +1,8 @@
 package models
 
 import (
-	"fmt"
 	"strings"
+	"user_store/h"
 	"user_store/interfaces"
 
 	"github.com/oklog/ulid/v2"
@@ -48,7 +48,7 @@ func NewAdmin(username string) User {
 }
 
 func (u *User) String() string {
-	return fmt.Sprintf("%s %s", u.Id, u.Username)
+	return h.F("%s %s", u.Id, u.Username)
 }
 
 func (u *User) ChangePassword(newPassword string) {

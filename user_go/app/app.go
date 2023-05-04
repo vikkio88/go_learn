@@ -4,19 +4,23 @@ import (
 	"fmt"
 	"user_store/console"
 	"user_store/db"
+	"user_store/h"
 	"user_store/models"
 )
 
 type Context struct {
-	user *models.User
+	user    *models.User
+	account *models.Account
 }
 
 func (c *Context) login(user *models.User) {
 	c.user = user
+	c.account = user.GetDefaultAccount()
 }
 
 func (c *Context) logout() {
 	c.user = nil
+	c.account = nil
 }
 
 type App struct {
@@ -29,9 +33,9 @@ func NewApp(db *db.Db) App {
 	return App{state: Login, context: &Context{user: nil}, db: db}
 }
 
-func (a *App) getUser() (*models.User, error) {
+func (a *App) getContext() (*Context, error) {
 	if a.context.user != nil {
-		return a.context.user, nil
+		return a.context, nil
 	}
 
 	return nil, fmt.Errorf("No User")
@@ -78,16 +82,16 @@ func (a *App) login() State {
 }
 
 func (a *App) dashboard() State {
-	u, err := a.getUser()
+	c, err := a.getContext()
 	if err != nil {
 		return Login
 	}
 
-	if u.IsAdmin() {
-		return a.adminDashboard(u)
+	if c.user.IsAdmin() {
+		return a.adminDashboard(c.user)
 	}
 
-	return a.userDashboard(u)
+	return a.userDashboard(c)
 }
 
 func (a *App) adminDashboard(u *models.User) State {
@@ -113,30 +117,35 @@ func (a *App) adminDashboard(u *models.User) State {
 	return Dashboard
 }
 
-func (a *App) userDashboard(u *models.User) State {
+func (a *App) userDashboard(ctx *Context) State {
 	console.Cls()
-	menu := []string{"Balance", "Withdraw", "Deposit", "Move Money", "Change Password", "Logout", "Quit"}
+	u := ctx.user
+	acc := ctx.account
+
+	menu := []string{"Balance", "Withdraw", "Deposit", "Move Money", "Change Account", "Change Password", "Logout", "Quit"}
 	fmt.Println("Welcome ", u.FullName)
-	fmt.Println("Account Id: ", u.Id)
+	fmt.Println(h.F("Account: %s (%v)", acc.Name, acc.Balance.Currency))
 	c := console.ChooseFrom("Menu", menu)
 	switch c {
 	case 0:
-		balance(u)
+		balance(acc)
 	case 1:
-		withdraw(u)
+		withdraw(acc)
 	case 2:
-		deposit(u)
+		deposit(acc)
 	case 3:
-		moveMoney(u, a.db)
+		moveMoney(u, acc, a.db)
 	case 4:
-		changePassword(u)
+		changeAccount(ctx, a.db)
 	case 5:
+		changePassword(u)
+	case 6:
 		{
 			fmt.Println("\nLogging out...")
 			a.context.logout()
 			return Login
 		}
-	case 6:
+	case 7:
 		{
 			fmt.Println("Quit")
 			console.EtC()
