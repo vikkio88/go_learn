@@ -61,33 +61,11 @@ func changePassword(u *models.User) {
 
 func moveMoney(u *models.User, account *models.Account, db *db.Db) {
 	fmt.Println("Move money")
-	fmt.Println("this is temporarly disabled")
-	console.EtC()
-	return
-	tries := 3
-	var u2 *models.User
-	for {
-		if tries < 1 {
-			fmt.Println("No tries left, try again later")
-			console.EtC()
-			return
-		}
-		id := console.GetStr("Insert account Id")
-		ux, err := db.GetUserById(id)
-		if err != nil {
-			tries--
-			fmt.Println(h.F("No account found with that id... try again (%d/3 tries left)", tries))
-			continue
-		} else {
-			u2 = ux
-			break
-		}
-
-	}
+	payeeId := console.GetStr("Insert account Id")
 	val := console.GetF64("how much money?")
 	//TODO:  check if enough money in the account
 	amount := models.NewMoneyFromF(account.Balance.Currency, val)
-	res, err := db.MoveMoney(u.Id, u2.Id, amount)
+	res, err := db.MoveMoney(u.Id, payeeId, amount)
 	if res {
 		fmt.Println("Done!")
 		console.EtC()

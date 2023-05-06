@@ -26,9 +26,10 @@ type User struct {
 }
 
 func NewUser(fullName string, balance Money) User {
-	accounts := []Account{NewDefaultAccount(balance)}
+	userId := ulid.Make().String()
+	accounts := []Account{NewDefaultAccount(balance, userId)}
 	return User{
-		Id:       ulid.Make().String(),
+		Id:       userId,
 		Username: strings.ToLower(strings.ReplaceAll(strings.TrimSpace(fullName), " ", ".")),
 		FullName: fullName,
 		Accounts: accounts,
