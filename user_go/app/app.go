@@ -98,19 +98,21 @@ func (a *App) dashboard() State {
 
 func (a *App) adminDashboard(u *models.User) State {
 	console.Cls()
-	menu := []string{"Reset User Password", "Logout", "Quit"}
+	menu := []string{"Create new User", "Reset User Password", "Logout", "Quit"}
 	fmt.Println("ADMIN DASHBOARD ", u.Username)
 	c := console.ChooseFrom("Menu", menu)
 	switch c {
 	case 0:
-		resetUserPassword(a.db)
+		createNewUser(a.db)
 	case 1:
+		resetUserPassword(a.db)
+	case 2:
 		{
 			fmt.Println("\nLogging out...")
 			a.context.logout()
 			return Login
 		}
-	case 2:
+	case 3:
 		{
 			fmt.Println("Quit")
 			console.EtC()

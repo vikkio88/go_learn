@@ -13,6 +13,7 @@ func Cls() {
 	fmt.Print("\033[H\033[2J")
 }
 
+// Press [Enter] to continue
 func EtC() {
 	GetStr("[ENTER] to continue...")
 }
@@ -50,6 +51,7 @@ func GetF64(prompt string) float64 {
 	}
 }
 
+// returns index of the array list passed as second parameter
 func ChooseFrom(prompt string, list []string) uint {
 	max := len(list)
 

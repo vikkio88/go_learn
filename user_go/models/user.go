@@ -49,7 +49,7 @@ func NewAdmin(username string) User {
 }
 
 func (u *User) String() string {
-	return h.F("%s %s", u.Id, u.Username)
+	return h.F("%s", u.Username)
 }
 
 func (u *User) ChangePassword(newPassword string) {

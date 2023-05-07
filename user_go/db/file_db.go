@@ -62,6 +62,12 @@ func NewDb(config JsonDbConfig) *Db {
 	return &db
 }
 
+func (d *Db) AddUser(u models.User) {
+	d.users = append(d.users, u)
+	d.indexUserAccounts(&u)
+	d.Persist()
+}
+
 func (d *Db) GetUserById(id string) (*models.User, error) {
 	idx := slices.IndexFunc(d.users, func(u models.User) bool { return u.Id == id })
 

@@ -23,8 +23,8 @@ Small exercise for a cli tool.
     - [ ] Create new account for users
 - [x] User Journey - Add Complex money with fractional unit to movements
 - [x] User Journey - Move Money between users
-- [ ] Allow users to have many different bank accounts
-    - [ ] move money between accounts
+- [x] Allow users to have many different bank accounts
+    - [x] move money between accounts
 - [ ] Allow different currency money exchange
 - [ ] Simulate Currency Exchange fluctuation
 - [ ] Record Transaction history

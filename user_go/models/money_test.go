@@ -46,3 +46,10 @@ func TestMoneyFromFloat(t *testing.T) {
 	m = models.NewMoneyFromF(models.Dollar, 21.54)
 	assert.Equal(t, "21.54 $", m.String())
 }
+
+func TestCurrencyFromString(t *testing.T) {
+	assert.Equal(t, models.Pound, models.CurrencyFromString("£"))
+	assert.Equal(t, models.Dollar, models.CurrencyFromString("$"))
+	assert.Equal(t, models.Euro, models.CurrencyFromString("€"))
+
+}

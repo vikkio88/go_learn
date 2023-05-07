@@ -80,6 +80,19 @@ const (
 	Pound
 )
 
+func CurrencyFromString(s string) Currency {
+	switch s {
+	case "$":
+		return Dollar
+	case "€":
+		return Euro
+	case "£":
+		return Pound
+	}
+
+	return Dollar
+}
+
 func (c Currency) String() string {
 	switch c {
 	case Dollar:
@@ -89,7 +102,6 @@ func (c Currency) String() string {
 	case Pound:
 		return "£"
 	}
-
 	return ""
 }
 
