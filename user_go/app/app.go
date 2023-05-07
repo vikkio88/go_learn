@@ -15,7 +15,9 @@ type Context struct {
 
 func (c *Context) login(user *models.User) {
 	c.user = user
-	c.account = user.GetDefaultAccount()
+	if !user.IsAdmin() {
+		c.account = user.GetDefaultAccount()
+	}
 }
 
 func (c *Context) logout() {
@@ -96,17 +98,19 @@ func (a *App) dashboard() State {
 
 func (a *App) adminDashboard(u *models.User) State {
 	console.Cls()
-	menu := []string{"Logout", "Quit"}
+	menu := []string{"Reset User Password", "Logout", "Quit"}
 	fmt.Println("ADMIN DASHBOARD ", u.Username)
 	c := console.ChooseFrom("Menu", menu)
 	switch c {
 	case 0:
+		resetUserPassword(a.db)
+	case 1:
 		{
 			fmt.Println("\nLogging out...")
 			a.context.logout()
 			return Login
 		}
-	case 1:
+	case 2:
 		{
 			fmt.Println("Quit")
 			console.EtC()
