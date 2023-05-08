@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 	"user_store/h"
 	"user_store/interfaces"
 	"user_store/libs"
@@ -67,6 +68,15 @@ func (d *Db) AddUser(u models.User) {
 	d.indexUserAccounts(&u)
 	d.Persist()
 }
+func (d *Db) DeleteUser(id string) {
+	idx := slices.IndexFunc(d.users, func(u models.User) bool { return u.Id == id })
+	if idx < 0 {
+		return
+	}
+
+	d.users[idx] = d.users[len(d.users)-1]
+	d.users = d.users[:len(d.users)-1]
+}
 
 func (d *Db) GetUserById(id string) (*models.User, error) {
 	idx := slices.IndexFunc(d.users, func(u models.User) bool { return u.Id == id })
@@ -86,6 +96,19 @@ func (d *Db) GetUserByLogin(username string, password string) (*models.User, err
 	}
 
 	return &d.users[idx], nil
+}
+
+func (d *Db) GetUsers(search string) []*models.User {
+	result := make([]*models.User, 0)
+	search = strings.ToLower(search)
+	for _, u := range d.users {
+		//TODO: check why rossi returns also things that are not supposed to be there
+		if strings.Contains(strings.ToLower(u.FullName), search) || strings.Contains(u.Username, search) {
+			result = append(result, &u)
+		}
+	}
+
+	return result
 }
 
 func (d *Db) GetAccountById(payeeAccountId string) (*models.Account, error) {

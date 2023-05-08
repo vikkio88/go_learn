@@ -49,8 +49,33 @@ func createNewUser(db *db.Db) {
 	console.EtC()
 }
 
-func DeleteUser(db *db.Db) {
-	return
-	fmt.Println("User deleted!")
+func deleteUser(db *db.Db) {
+	fmt.Println("Delete User")
+	search := console.GetStr("search by full name or username")
+	users := db.GetUsers(search)
+	if len(users) == 0 {
+		fmt.Println("No user!")
+		console.EtC()
+		return
+	}
+
+	user := users[0]
+
+	if len(users) > 1 {
+		userList := make([]string, len(users))
+		for i, u := range users {
+			userList[i] = u.Username
+		}
+		idx := console.ChooseFrom("choose the user to delete", userList)
+		user = users[idx]
+	}
+
+	fmt.Println(h.F("you choose to delete [%s]", user))
+	confirm := console.Confirm()
+	if confirm {
+		db.DeleteUser(user.Id)
+		fmt.Println("User Deleted!")
+	}
+
 	console.EtC()
 }

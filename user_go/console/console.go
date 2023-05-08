@@ -96,3 +96,9 @@ func ChooseFromMap(prompt string, list map[string]string) string {
 		return choice
 	}
 }
+
+func Confirm() bool {
+	str := GetStr("Are you sure? [y/n]")
+	str = strings.ToLower(str)
+	return str == "y" || str == "yes"
+}
